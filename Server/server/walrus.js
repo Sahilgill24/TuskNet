@@ -3,9 +3,14 @@ const cors = require('cors');
 const axios = require('axios');
 const path = require('path');
 const bodyParser = require('body-parser');
+const ethers = require('ethers');
+const abi = require('../../abi/blobIDstorage.json');
 
 const AGGREGATOR = "https://aggregator.walrus-testnet.walrus.space";
 const PUBLISHER = "https://publisher.walrus-testnet.walrus.space";
+
+
+
 
 const app = express();
 app.use(cors());
@@ -81,10 +86,17 @@ app.post('/modelupload', async (req, res) => {
 
         // Convert data to buffer
         const fileBuffer = Buffer.from(req.body.data, 'utf-8');
+        const provider = new ethers.providers.JsonRpcProvider('https://ethereum-sepolia-rpc.publicnode.com');
+        const signer = new ethers.Wallet('6b99711d264ac83b798ec10389f34afe53e6f6c6fdbb821b139aba9fd4cf9f2c', provider);
+        const contractAddress = '0xeb640878c5f8D9E91A86786dC9c3E30E203EBc17';
+        const blobIDstorage = new ethers.Contract(contractAddress, abi, signer);
 
         // Upload file directly
         const uploader = await upload(fileBuffer);
         console.log('Uploaded blob ID:', uploader);
+        const res2 = await blobIDstorage.uploadBlobIDs(uploader);
+        console.log(res2.hash)
+        console.log("https://sepolia.etherscan.io/tx/" + res2.hash)
 
         res.status(200).send(uploader);
     } catch (error) {
@@ -105,7 +117,7 @@ app.post('/modelupload', async (req, res) => {
 
 
 // Start the server
-const PORT = process.env.PORT || 6000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

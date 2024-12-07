@@ -4,6 +4,12 @@ const cors = require('cors');
 const { exec, spawn } = require('child_process');
 const fs = require('fs').promises;
 const { encrypt, decrypt } = require('./encryption')
+const ethers = require('ethers');
+const abi = require('../abi/proofstorage.json')
+
+
+
+
 
 const app = express();
 app.use(cors());
@@ -89,8 +95,15 @@ function run_script() {
 
 app.get('/training', async (req, res) => {
     // begins the training on the local machine of the contributor 
+    const provider = new ethers.providers.JsonRpcProvider('https://ethereum-sepolia-rpc.publicnode.com');
+    const signer = new ethers.Wallet('6b99711d264ac83b798ec10389f34afe53e6f6c6fdbb821b139aba9fd4cf9f2c', provider);
+    const contractAddress = '0x81E43957898eebaD04c0D5889324A8B46C27029C'
+    const stakingcontract = await ethers.Contract(contractAddress, abi, signer)
+    const tx = await stakingcontract.stake({ value: 10210000000000001 })
+    console.log(tx.hash)
+    console.log("https://sepolia.etherscan.io/tx/" + tx.hash)
+    res.send('Training has begun');
     run_script();
-
 })
 
 
@@ -128,6 +141,16 @@ app.get('/getEncryptedValues', async (req, res) => {
         const encryptedvalue = encrypt(encryptval)
         const uploader = await upload('encryption.txt');
         console.log('Uploaded blob ID:', uploader);
+        const provider = new ethers.providers.JsonRpcProvider('https://ethereum-sepolia-rpc.publicnode.com');
+        const signer = new ethers.Wallet('6b99711d264ac83b798ec10389f34afe53e6f6c6fdbb821b139aba9fd4cf9f2c', provider);
+        const contractAddress = '0x7d5F3135FCd28916b13829023d45d1f948FaC87f';
+
+
+        const contract = new ethers.Contract(contractAddress, abi, signer);
+
+        const tx = await contract.uploadBlobIDs(uploader)
+        console.log('Transaction hash:', tx.hash);
+        console.log("https://sepolia.etherscan.io/tx/" + tx.hash)
 
         // Ensure both values are extracted
         return res.json({ uploader, encryptedvalue })

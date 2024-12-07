@@ -107,17 +107,8 @@ const StartTrainingButton = ({
 }) => {
   const [dataSet, setDataSet] = useState<File | null>(null);
   const stakeAndUploadDataSet = async () => {
-    if (!dataSet) return
-    const data = new FormData()
-    data.append('file', dataSet)
-    const res1 = await axios.post("http://127.0.0.1/model_trainer", data, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-    console.log(res1)
-    const res2 = await axios.get("http://127.0.0.1/model_trainer")
-    console.log(res2)
+    const response = await axios.get('http://localhost:4000/training')
+    console.log(response)
 
   }
   return (

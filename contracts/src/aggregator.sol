@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-//SPDX-License-Identifier: MIT
+// 0x23cacbF723355F96fb42ce3ba1Cbc247F41C2568
 
 pragma solidity ^0.8.19;
 
@@ -18,6 +18,6 @@ contract Aggregator {
         }
         return sum / decryptedValues.length;
     }
-    // Here I am taking this as the federated Average , in actual we
-    // can take some different values
+    // Here I am taking this as the federated Average
+    // ** actual math **
 }

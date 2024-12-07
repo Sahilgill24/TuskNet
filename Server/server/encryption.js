@@ -22,11 +22,7 @@ function decrypt(text) {
 
 const textToEncrypt = "A doesn't become reality through magic; it takes sweat, determination and hard work.";
 const textToEncryptAsByteArray = Buffer.from(textToEncrypt);
-const decrypted = decrypt({
-    "iv": "924b4bcd10dc52475224e0a866f2c691",
-    "encryptedData": "7cfad8288656c6dce7eee74b19b267cf"
-})
 
-console.log(decrypted.toString())
+
 
 module.exports = { encrypt, decrypt }

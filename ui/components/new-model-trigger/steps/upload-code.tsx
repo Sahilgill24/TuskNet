@@ -1,3 +1,4 @@
+'use client'
 import React, { useEffect, useState } from "react";
 import cobalt from "../cobalt.json";
 import { Editor } from "@monaco-editor/react";
@@ -6,13 +7,27 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChevronsRight, InfoIcon, UploadIcon } from "lucide-react";
 import { useNewModelStore } from "@/lib/stores/new-model-store";
+import axios from "axios";
+import ethers from "ethers";
+
 
 const UploadCode = () => {
   const { nextStep } = useStepper();
   const { code, setCode } = useNewModelStore();
+  console.log(code)
+  // await request(code)
+
+  async function request(data: any) {
+    console.log(data)
+    const response = await axios.post('http://localhost:5001/modelupload', { "data": data })
+    console.log(response)
+  }
+
 
   const [uploadedFile, setUploadedFile] = useState<File | undefined>();
   const theme = JSON.parse(JSON.stringify(cobalt));
+
+  console.log(code);
 
   useEffect(() => {
     if (uploadedFile) {
@@ -69,8 +84,9 @@ const UploadCode = () => {
       <div className="flex flex-row px-1">
         <div className="flex-1" />
         <Button
-          onClick={() => {
+          onClick={async () => {
             nextStep();
+            await request(code);
           }}
           className="flex items-center"
           disabled={!code}
