@@ -4,7 +4,8 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { PublisherModel } from "@/lib/types";
 import DropIndicator from "./drop-indicator";
-import { CircleFadingArrowUp, Pencil, Trash } from "lucide-react";
+import { Merge, Pencil, Trash } from "lucide-react";
+import AggregateParamsModalWrapper from "./aggregate-params-modal";
 
 interface CardProps extends PublisherModel {
   column: "draft" | "published" | "trained";
@@ -87,11 +88,17 @@ const KanbanCard: React.FC<CardProps> = ({
             })}
           </span>
           {column === "draft" && <Actions visible={focused} />}
-          {column === "published" && status === "waitingForClients" && (
-            <WaitingForClients focused={focused} clients={clients} />
-          )}
           {column === "published" && status === "training" && (
-            <TrainingIndicator />
+            <TrainingIndicator
+              focused={focused}
+              clients={clients}
+              title={title}
+              description={description}
+              status={status}
+              epochs={epochs}
+              createdAt={createdAt}
+              stakeAmount={stakeAmount}
+            />
           )}
         </div>
       </motion.div>
@@ -122,16 +129,27 @@ const Actions = ({ visible = true }: { visible: boolean }) => {
   );
 };
 
-const WaitingForClients = ({
+const TrainingIndicator = ({
   focused,
   clients,
+  title,
+  description,
+  status,
+  epochs,
+  createdAt,
+  stakeAmount,
 }: {
   focused: boolean;
   clients: number;
+  title: string;
+  description: string;
+  status: string;
+  epochs: number;
+  createdAt: Date;
+  stakeAmount: number;
 }) => {
   const [showButton, setShowButton] = useState(focused);
   const [buttonOpacity, setButtonOpacity] = useState(focused ? 1 : 0);
-
   useEffect(() => {
     if (focused) {
       setShowButton(true);
@@ -148,40 +166,29 @@ const WaitingForClients = ({
         className={`flex flex-row items-center gap-2 transition-all duration-300 ease-out`}
       >
         <div className="w-3 h-3 bg-highlight animate-pulse rounded-full"></div>
-        <p className="text-xs text-muted-foreground font-medium">
-          Waiting for clients{" "}
-          <span className="text-highlight font-bold text-xs">({clients})</span>
-        </p>
+        <p className="text-xs text-muted-foreground font-medium">Training</p>
       </div>
       <div
         className={`overflow-hidden grid place-items-center transition-all duration-300 ease-out ${
           focused ? "w-6 opacity-100" : "w-0 opacity-0"
         }`}
       >
-        <button
-          title="push model for training"
-          disabled={clients === 0}
-          className={`transition-all duration-300 enabled:hover:text-primary disabled:cursor-not-allowed disabled:opacity-50`}
-          style={{
-            transform: `translateX(${buttonOpacity === 0 ? "10px" : "0"})`,
-          }}
-        >
-          <CircleFadingArrowUp size={18} />
-        </button>
+        <AggregateParamsModalWrapper>
+          <button
+            title="aggregate model params"
+            disabled={clients === 0}
+            className={`transition-all duration-300 text-muted-foreground enabled:hover:text-primary disabled:cursor-not-allowed disabled:opacity-50`}
+            style={{
+              transform: `translateX(${buttonOpacity === 0 ? "10px" : "0"})`,
+            }}
+          >
+            <Merge size={18} />
+          </button>
+        </AggregateParamsModalWrapper>
       </div>
     </div>
   );
 };
 
-const TrainingIndicator = () => {
-  return (
-    <div
-      className={`flex items-center gap-2 transition-all duration-300 ease-out`}
-    >
-      <div className="w-3 h-3 bg-primary animate-pulse rounded-full"></div>
-      <p className="text-xs text-muted-foreground font-medium">Training</p>
-    </div>
-  );
-};
 
 export default KanbanCard;

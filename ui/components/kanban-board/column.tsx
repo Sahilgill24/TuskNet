@@ -53,8 +53,7 @@ const Column: React.FC<ColumnProps> = ({
       const modelToTransfer = copy.find((m) => m.id === modelId);
       if (!modelToTransfer) return;
 
-      // Update model status to "waitingForClients" when moved to published
-      modelToTransfer.status = "waitingForClients";
+      modelToTransfer.status = "training";
 
       copy = copy.filter((m) => m.id !== modelId);
       const moveToBack = before === "-1";
@@ -102,8 +101,7 @@ const Column: React.FC<ColumnProps> = ({
 
   const filteredModels = models.filter((m) => {
     if (column === "draft") return m.status === "draft";
-    if (column === "published")
-      return m.status === "waitingForClients" || m.status === "training";
+    if (column === "published") return m.status === "training";
     if (column === "trained") return m.status === "trained";
     return false;
   });
