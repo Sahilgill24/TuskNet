@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Merge, MoveRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import CopyAddress from "../ui/copy-address";
+import CopyAddress from "@/components/ui/copy-address";
 import {
   Table,
   TableBody,
@@ -20,7 +20,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
+import Spinner from "@/components/ui/spinner";
 
 interface Contributor {
   address: string;
@@ -29,8 +30,12 @@ interface Contributor {
 
 const AggregateParamsModalWrapper = ({
   children,
+  id,
+  title,
 }: {
   children: React.ReactNode;
+  id: string;
+  title: string;
 }) => {
   const sampleContributors: Contributor[] = [
     {
@@ -49,8 +54,11 @@ const AggregateParamsModalWrapper = ({
 
   const [contributors, setContributors] = useState<Contributor[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [aggregating, setIsAggregating] = useState(false);
+  const [loss, setLoss] = useState(null);
 
   useEffect(() => {
+    // TODO: Fetch contributors from the server
     setIsLoading(true);
     setTimeout(() => {
       setContributors(sampleContributors);
@@ -67,29 +75,65 @@ const AggregateParamsModalWrapper = ({
             Aggregate Params
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Aggregate parameters for the selected models{" "}
+            Aggregate parameters for {title}
           </DialogDescription>
         </DialogHeader>
-
-        <Table>
-          <TableCaption>Contributors on your model.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Address</TableHead>
-              <TableHead>BlobID</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {contributors.map((contributor, index) => (
-              <TableRow key={index}>
-                <TableCell><CopyAddress className="text-sm" address={contributor.address} /></TableCell>
-                <TableCell><CopyAddress className="text-sm font-mono" address={contributor.blobID} /></TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-
-        <Button className="mt-4">Aggregate <Merge className="w-4 ml-1" /></Button>
+        {isLoading ? (
+          <Spinner className="w-8 h-8 mb-4 mx-auto" />
+        ) : (
+          <>
+            <Table>
+              <TableCaption>
+                {contributors.length
+                  ? "Contributors on your model."
+                  : "No Contributors on your model, currently.."}
+              </TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Address</TableHead>
+                  <TableHead>BlobID</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {contributors.map((contributor, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <CopyAddress
+                        className="text-sm"
+                        address={contributor.address}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <CopyAddress
+                        className="text-sm font-mono"
+                        address={contributor.blobID}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <Button
+              disabled={contributors.length == 0 || aggregating}
+              onClick={() => setIsAggregating(true)}
+              className="mt-4"
+            >
+              {aggregating ? (
+                "Aggregating..."
+              ) : (
+                <>
+                  {" "}
+                  Aggregate <Merge className="w-4 ml-1" />
+                </>
+              )}
+            </Button>
+          </>
+        )}
+        {loss ? (
+          <p className="w-full rounded-lg border border-primary/20 p-4 flex flex-row items-center gap-2 justify-center font-semibold bg-secondary">
+            Loss <MoveRight className="w-4" /> {loss}
+          </p>
+        ) : null}
       </DialogContent>
     </Dialog>
   );

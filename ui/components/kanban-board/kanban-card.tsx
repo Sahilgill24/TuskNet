@@ -89,16 +89,7 @@ const KanbanCard: React.FC<CardProps> = ({
           </span>
           {column === "draft" && <Actions visible={focused} />}
           {column === "published" && status === "training" && (
-            <TrainingIndicator
-              focused={focused}
-              clients={clients}
-              title={title}
-              description={description}
-              status={status}
-              epochs={epochs}
-              createdAt={createdAt}
-              stakeAmount={stakeAmount}
-            />
+            <TrainingIndicator focused={focused} id={id} />
           )}
         </div>
       </motion.div>
@@ -131,22 +122,10 @@ const Actions = ({ visible = true }: { visible: boolean }) => {
 
 const TrainingIndicator = ({
   focused,
-  clients,
-  title,
-  description,
-  status,
-  epochs,
-  createdAt,
-  stakeAmount,
+  id,
 }: {
   focused: boolean;
-  clients: number;
-  title: string;
-  description: string;
-  status: string;
-  epochs: number;
-  createdAt: Date;
-  stakeAmount: number;
+  id: string;
 }) => {
   const [showButton, setShowButton] = useState(focused);
   const [buttonOpacity, setButtonOpacity] = useState(focused ? 1 : 0);
@@ -173,22 +152,20 @@ const TrainingIndicator = ({
           focused ? "w-6 opacity-100" : "w-0 opacity-0"
         }`}
       >
-        <AggregateParamsModalWrapper>
+        <AggregateParamsModalWrapper id={id}>
           <button
             title="aggregate model params"
-            disabled={clients === 0}
             className={`transition-all duration-300 text-muted-foreground enabled:hover:text-primary disabled:cursor-not-allowed disabled:opacity-50`}
             style={{
               transform: `translateX(${buttonOpacity === 0 ? "10px" : "0"})`,
             }}
           >
-            <Merge size={18} />
+            <Merge className="w-4" />
           </button>
         </AggregateParamsModalWrapper>
       </div>
     </div>
   );
 };
-
 
 export default KanbanCard;
