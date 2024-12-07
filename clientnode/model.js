@@ -109,7 +109,8 @@ app.get('/getEncryptedValues', async (req, res) => {
         const lines = data.split('\n');
         let salt = null;
         let encryptedCost = null;
-        
+        let val = null;
+
 
         // Extract salt and encrypted cost values from the file content
         lines.forEach(line => {
@@ -118,12 +119,18 @@ app.get('/getEncryptedValues', async (req, res) => {
             } else if (line.startsWith('Encrypted cost:')) {
                 encryptedCost = line.replace('Encrypted cost: ', '').trim();
             }
+            else if (line.startsWith('x:')) {
+                val = line.replace('x: ', '').trim();
+                encryptval = Buffer.from(val)
+
+            }
         });
+        const encryptedvalue = encrypt(encryptval)
         const uploader = await upload('encryption.txt');
         console.log('Uploaded blob ID:', uploader);
 
         // Ensure both values are extracted
-        return res.json({ uploader })
+        return res.json({ uploader, encryptedvalue })
     } catch (error) {
         console.error("Error reading encryption.txt:", error);
         return res.status(500).send("Error reading encryption.txt");

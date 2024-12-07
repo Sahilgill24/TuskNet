@@ -32,7 +32,7 @@ class PedersonCommitment:
     def commit(self, x):
         r = int.from_bytes(os.urandom(32), 'big') % self.q
         c = (pow(self.g, x, self.q) * pow(self.h, r, self.q)) % self.q
-        return c, r
+        return c, r,x
 
     def verify(self, c, x, r):
         return c == (pow(self.g, x, self.q) * pow(self.h, r, self.q)) % self.q
@@ -45,14 +45,15 @@ commitment = PedersonCommitment()
 
 def encrypt_cost(cost):
     cost_int = int(cost)
-    c, r = commitment.commit(cost_int)
+    c, r ,x= commitment.commit(cost_int)
     print(f'salt: {r}')
     print(f'Encrypted cost: {c}')
     sys.stdout.flush()
     with open('encryption.txt', 'w') as f:
         f.write(f'salt: {r}\n')
         f.write(f'Encrypted cost: {c}\n')
-    return c, r
+        f.write(f'x:{x}\n')
+    return c, r, x
 
 encrypt_cost($multiplied_prediction)
 "
