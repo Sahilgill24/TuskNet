@@ -1,6 +1,7 @@
 const axios = require('axios');
 const express = require('express');
 const cors = require('cors');
+const { exec, spawn } = require('child_process');
 
 const app = express();
 app.use(cors());
@@ -33,6 +34,22 @@ async function get(blobId, savePath) {
 }
 const savepath = 'model/model.py'
 
+function run_script() {
+    exec('./run.sh', (err, stdout, stderr) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        console.log(stdout);
+    });
+ const script = spawn('bash', ['./run.sh']);
+ 
+    script.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`);
+    });
+
+}
+
 // helps to get the model on the client 
 // app.post('/getmodel', async (req, res) => {
 //     const blobID = req.body;
@@ -43,9 +60,12 @@ const savepath = 'model/model.py'
 
 // })
 
-app.post('/ping', (req, res) => {
-    return res.json('pong');
+app.post('/trainig', async (req, res) => {
+    // begins the trainig on the 
+    run_script();
 })
+
+
 
 app.get('/getmodel', async (req, res) => {
     const blobID = req.query.data;
