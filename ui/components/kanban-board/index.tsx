@@ -18,7 +18,7 @@ const DEFAULT_MODELS: PublisherModel[] = [
     id: "2",
     title: "Product Update Model",
     description: "Model for new features announcement",
-    status: "waitingForClients",
+    status: "training",
     walletAddress: "0x123456789",
     epochs: 10,
     createdAt: new Date(),

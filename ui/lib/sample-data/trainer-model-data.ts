@@ -10,7 +10,7 @@ export const sampleTrainerModels: TrainerModel[] = [
     status: "available",
     epochs: 50,
     createdAt: new Date("2024-09-01T10:00:00Z"),
-    stakeAmount: 1000,
+    stakeAmount: 0.001,
   },
   {
     id: "trainer-1",
@@ -21,7 +21,7 @@ export const sampleTrainerModels: TrainerModel[] = [
     status: "available",
     epochs: 50,
     createdAt: new Date("2024-09-01T10:00:00Z"),
-    stakeAmount: 1000,
+    stakeAmount: 0.001,
   },
   {
     id: "trainer-1",
@@ -32,7 +32,7 @@ export const sampleTrainerModels: TrainerModel[] = [
     status: "available",
     epochs: 50,
     createdAt: new Date("2024-09-01T10:00:00Z"),
-    stakeAmount: 1000,
+    stakeAmount: 0.001,
   },
   {
     id: "trainer-1",
@@ -43,7 +43,7 @@ export const sampleTrainerModels: TrainerModel[] = [
     status: "available",
     epochs: 50,
     createdAt: new Date("2024-09-01T10:00:00Z"),
-    stakeAmount: 1000,
+    stakeAmount: 0.001,
   },
 
   {

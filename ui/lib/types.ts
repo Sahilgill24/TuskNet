@@ -1,4 +1,4 @@
-export type PublisherModelStatus = "draft" | "waitingForClients" | "training" | "trained";
+export type PublisherModelStatus = "draft" | "training" | "trained";
 
 export type PublisherModel = {
   id: string;

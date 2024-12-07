@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
+import { useAccount, useBalance } from "wagmi";
+import { sepolia } from "viem/chains";
 
 interface navItem {
   name: string;
@@ -20,10 +22,14 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const router = useRouter();
 
-  const [wallet, setWallet] = useState("0x123456789");
-  const truncatedWallet = wallet?.slice(0, 6) + "..." + wallet?.slice(-6);
-
-  const [balance, setBalance] = useState(0.001);
+  // Fetching account and balance (sepolia eth)
+  const { address } = useAccount();
+  const balance = useBalance({
+    address: address,
+    chainId: sepolia.id,
+  });
+  
+  const truncatedWallet = address?.slice(0, 6) + "..." + address?.slice(-6);
 
   return (
     <>
@@ -49,18 +55,22 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
             </nav>
           </div>
 
-          {wallet ? (
+          {address ? (
             <div className="flex flex-row gap-1">
-              <span className="text-sm ">Balance : {balance} ETH</span>
+              <span className="text-sm ">
+                Balance :{" "}
+                {balance.data?.formatted
+                  ? parseFloat(balance.data.formatted).toFixed(3)
+                  : 0}{" "}
+                ETH
+              </span>
               <Separator className="w-[2px]" orientation="vertical" />
               <span className="text-sm text-muted-foreground">
                 {truncatedWallet}
               </span>
             </div>
           ) : (
-            <Button>
-              Connect Wallet
-            </Button>
+            <Button>Connect Wallet</Button>
           )}
         </header>
         <div className="mt-8 flex w-full flex-col gap-8">{children}</div>
