@@ -70,8 +70,9 @@ async function get(blobId, savePath) {
 
 /**
  * API endpoint for uploading a file
+ * returns the model 
  */
-app.post('/api_testing', async (req, res) => {
+app.post('/modelupload', async (req, res) => {
     try {
         // Validate request data
         if (!req.body || !req.body.data) {
