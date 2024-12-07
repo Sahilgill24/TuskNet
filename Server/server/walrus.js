@@ -1,12 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
-const fs = require('fs').promises;
 const path = require('path');
 const bodyParser = require('body-parser');
 
-const UPLOAD_FOLDER = 'model/';
-const FILENAME = 'model.py';
 const AGGREGATOR = "https://aggregator.walrus-testnet.walrus.space";
 const PUBLISHER = "https://publisher.walrus-testnet.walrus.space";
 
@@ -17,13 +14,12 @@ app.use(bodyParser.json({ limit: '50mb' }));
 /**
  * Upload a file to the Walrus publisher service.
  * 
- * @param {string} filePath - Path to the file to be uploaded
+ * @param {Buffer} fileBuffer - Buffer of the file to be uploaded
  * @returns {Promise<string>} Blob ID of the uploaded file
  */
-async function upload(filePath) {
+async function upload(fileBuffer) {
     try {
         const url = `${PUBLISHER}/v1/store?epochs=5`;
-        const fileBuffer = await fs.readFile(filePath);
 
         const response = await axios({
             method: 'put',
@@ -64,25 +60,11 @@ async function get(blobId, savePath) {
             responseType: 'arraybuffer'
         });
 
-        await fs.writeFile(savePath, response.data);
+        await require('fs').promises.writeFile(savePath, response.data);
         return true;
     } catch (error) {
         console.error(`Error downloading blob: ${error.message}`);
         return false;
-    }
-}
-
-/**
- * Ensure the upload directory exists
- */
-async function ensureUploadDirectory() {
-    try {
-        await fs.mkdir(UPLOAD_FOLDER, { recursive: true });
-    } catch (error) {
-        if (error.code !== 'EEXIST') {
-            console.error(`Error creating upload directory: ${error.message}`);
-            throw error;
-        }
     }
 }
 
@@ -96,20 +78,14 @@ app.post('/api_testing', async (req, res) => {
             return res.status(400).json({ error: 'No data provided' });
         }
 
-        // Ensure upload directory exists
-        await ensureUploadDirectory();
+        // Convert data to buffer
+        const fileBuffer = Buffer.from(req.body.data, 'utf-8');
 
-        // Construct full file path
-        const filePath = path.join(UPLOAD_FOLDER, FILENAME);
-
-        // Write file content
-        await fs.writeFile(filePath, req.body.data);
-
-        // Upload file
-        const uploader = await upload(filePath);
+        // Upload file directly
+        const uploader = await upload(fileBuffer);
         console.log('Uploaded blob ID:', uploader);
 
-        res.status(200).send('done');
+        res.status(200).send(uploader);
     } catch (error) {
         console.error(`Unexpected error: ${error.message}`);
 
@@ -126,7 +102,7 @@ app.post('/api_testing', async (req, res) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 6000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
