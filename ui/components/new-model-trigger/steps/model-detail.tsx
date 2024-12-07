@@ -3,9 +3,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useStepper } from "@/components/ui/stepper";
 import { Textarea } from "@/components/ui/textarea";
+import { useModelStore } from "@/lib/stores/model-store";
 import { useNewModelStore } from "@/lib/stores/new-model-store";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import React from "react";
+import { useAccount } from "wagmi";
 
 interface ModelDetailProps {
   hasCompletedAllSteps: boolean;
@@ -26,9 +28,23 @@ const ModelDetails = (props: ModelDetailProps) => {
     setStakeAmount,
   } = useNewModelStore();
 
+  const { addModel } = useModelStore();
+  const { address } = useAccount();
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setHasCompletedAllSteps(true);
+
+    addModel({
+      id: "12",
+      title: title,
+      description: description,
+      epochs: epochs,
+      stakeAmount: stakeAmount,
+      createdAt: new Date(),
+      walletAddress: address || "0x123456789",
+      status: "draft",
+    });
     nextStep();
 
     // TODO: API call to create model
@@ -100,10 +116,7 @@ const ModelDetails = (props: ModelDetailProps) => {
           >
             <ChevronsLeft className="mr-1" size={16} /> Back
           </Button>
-          <Button
-            className="w-24 h-10"
-            type="submit"
-          >
+          <Button className="w-24 h-10" type="submit">
             Next <ChevronsRight className="ml-1" size={16} />
           </Button>
         </div>

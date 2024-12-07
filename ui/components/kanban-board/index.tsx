@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Column from "./column";
 import { PublisherModel } from "@/lib/types";
+import { useModelStore } from "@/lib/stores/model-store";
 
 const DEFAULT_MODELS: PublisherModel[] = [
   {
@@ -37,7 +38,7 @@ const DEFAULT_MODELS: PublisherModel[] = [
 ];
 
 export const PublisherKanbanBoard: React.FC = () => {
-  const [models, setModels] = useState<PublisherModel[]>(DEFAULT_MODELS);
+  const { models, setModels} = useModelStore();
 
   return (
     <div className="flex h-full w-full gap-3 py-6">
