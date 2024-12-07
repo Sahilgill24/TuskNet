@@ -22,10 +22,16 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
+import axios from "axios";
+import { decrypt } from "@/lib/utils";
+import { EncryptedData } from "@/lib/utils";
+import { ethers } from "ethers";
+import abiJson from "../../../abi/aggregator.json"
+
 
 interface Contributor {
   address: string;
-  blobID: string;
+  blobID: string|null;
 }
 
 const AggregateParamsModalWrapper = ({
@@ -37,25 +43,54 @@ const AggregateParamsModalWrapper = ({
   id: string;
   title: string;
 }) => {
-  const sampleContributors: Contributor[] = [
-    {
-      address: "0x1234567890abcdef",
-      blobID: "0x1234567890abcdef",
-    },
-    {
-      address: "0x1234567890abcdef",
-      blobID: "0x1234567890abcdef",
-    },
-    {
-      address: "0x1234567890abcdef",
-      blobID: "0x1234567890abcdef",
-    },
-  ];
+  
+
+  const abi = JSON.parse(JSON.stringify(abiJson))
+  const provider = new ethers.providers.JsonRpcProvider('https://ethereum-sepolia-rpc.publicnode.com');
+  const signer = new ethers.Wallet('6b99711d264ac83b798ec10389f34afe53e6f6c6fdbb821b139aba9fd4cf9f2c', provider);
+  const contractAddress = '0x23cacbF723355F96fb42ce3ba1Cbc247F41C2568';
+  const aggregatorcontract = new ethers.Contract(contractAddress, abi, signer);
 
   const [contributors, setContributors] = useState<Contributor[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [aggregating, setIsAggregating] = useState(false);
-  const [loss, setLoss] = useState(null);
+  const [loss, setLoss] = useState<string | null>(null)
+  const [uplaoder,setuploader] = useState<string | null>(null)
+
+  const sampleContributors: Contributor[] = [
+    {
+      address: "0x8F26D683822E60d522b58f7DB63D352CB7FAe6e4",
+      blobID: uplaoder,
+    },
+    {
+      address: "0x8F26D683822E60d522b58f7DB63D352CB7FAe6e4",
+      blobID: "0x1234567890abcdef",
+    },
+    {
+      address: "0x8F26D683822E60d522b58f7DB63D352CB7FAe6e4",
+      blobID: uplaoder,
+    },
+  ];
+
+  const aggregate = async () => {
+    setIsAggregating(true);
+
+    const res = await axios.get('http://localhost:4000/getEncryptedValues');
+    const { uploader, encryptedvalue } = res.data
+    const encrypta: EncryptedData = {
+      iv: encryptedvalue.iv,
+      encryptedData: encryptedvalue.encryptedData,
+    };
+    const finalval = decrypt(encrypta)
+
+    const tx = await aggregatorcontract.decryptedValue(parseFloat(finalval))
+    console.log("https://sepolia.etherscan.io/tx/" + tx.hash)
+    const tx2 = await aggregatorcontract.federatedaverage()
+    setLoss(tx2)
+    setIsAggregating(false);
+    console.log(uploader)
+    setuploader(uploader)
+  }
 
   useEffect(() => {
     // TODO: Fetch contributors from the server
