@@ -34,6 +34,7 @@ def encrypt_cost(cost):
     # Assuming cost is an integer
     cost_int = int(cost)
     c, r = commitment.commit(cost_int)
+    print(f"salt: {r}")
     print(f"Encrypted cost: {c}")
     sys.stdout.flush()
     return c, r

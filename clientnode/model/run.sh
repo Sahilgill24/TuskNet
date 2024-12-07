@@ -46,8 +46,12 @@ commitment = PedersonCommitment()
 def encrypt_cost(cost):
     cost_int = int(cost)
     c, r = commitment.commit(cost_int)
+    print(f'salt: {r}')
     print(f'Encrypted cost: {c}')
     sys.stdout.flush()
+    with open('encryption.txt', 'w') as f:
+        f.write(f'salt: {r}\n')
+        f.write(f'Encrypted cost: {c}\n')
     return c, r
 
 encrypt_cost($multiplied_prediction)
