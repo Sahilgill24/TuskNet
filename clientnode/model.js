@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const { exec, spawn } = require('child_process');
 const fs = require('fs').promises;
+const { encrypt, decrypt } = require('./encryption')
 
 const app = express();
 app.use(cors());
@@ -86,11 +87,12 @@ function run_script() {
 }
 
 
-app.post('/training', async (req, res) => {
+app.get('/training', async (req, res) => {
     // begins the training on the local machine of the contributor 
     run_script();
 
 })
+
 
 
 
@@ -107,6 +109,7 @@ app.get('/getEncryptedValues', async (req, res) => {
         const lines = data.split('\n');
         let salt = null;
         let encryptedCost = null;
+        
 
         // Extract salt and encrypted cost values from the file content
         lines.forEach(line => {
