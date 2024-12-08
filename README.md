@@ -50,3 +50,25 @@ Say Hi to TuskNet!  A decentralized platform built on the Walrus network, design
     With TuskNet, nodes submit encrypted model updates—weights and biases—that are aggregated on-chain by smart contracts on the Walrus network. The result? A seamless integration of contributions, enabling better AI models without ever exposing private data.
 
 
+## Run locally 
+
+1. First clone the repository.
+
+2. Setup the local walrus server.
+    ``` sh
+    cd Server/server
+    npm i 
+    node walrus.js
+    ```
+3. Setup the walrus client.
+    ```sh
+    cd clientnode
+    npm i 
+    node model.js
+    ```
+4. Initialize the interface.
+   ```sh
+    pnpm i
+    pnpm dev
+   ```
+
