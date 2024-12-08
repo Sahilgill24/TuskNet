@@ -20,8 +20,5 @@ function decrypt(text) {
     return decrypted;
 }
 
-const textToEncrypt = "A doesn't become reality through magic; it takes sweat, determination and hard work.";
-const textToEncryptAsByteArray = Buffer.from(textToEncrypt);
-let hw = encrypt(textToEncryptAsByteArray)
 
 module.exports = { encrypt, decrypt }

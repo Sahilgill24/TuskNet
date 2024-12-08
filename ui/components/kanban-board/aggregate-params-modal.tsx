@@ -31,7 +31,7 @@ import abiJson from "../../../abi/aggregator.json"
 
 interface Contributor {
   address: string;
-  blobID: string|null;
+  blobID: string | null;
 }
 
 const AggregateParamsModalWrapper = ({
@@ -43,7 +43,7 @@ const AggregateParamsModalWrapper = ({
   id: string;
   title: string;
 }) => {
-  
+
 
   const abi = JSON.parse(JSON.stringify(abiJson))
   const provider = new ethers.providers.JsonRpcProvider('https://ethereum-sepolia-rpc.publicnode.com');
@@ -55,7 +55,7 @@ const AggregateParamsModalWrapper = ({
   const [isLoading, setIsLoading] = useState(false);
   const [aggregating, setIsAggregating] = useState(false);
   const [loss, setLoss] = useState<string | null>(null)
-  const [uplaoder,setuploader] = useState<string | null>(null)
+  const [uplaoder, setuploader] = useState<string | null>(null)
 
   const sampleContributors: Contributor[] = [
     {
@@ -64,13 +64,14 @@ const AggregateParamsModalWrapper = ({
     },
     {
       address: "0x8F26D683822E60d522b58f7DB63D352CB7FAe6e4",
-      blobID: "0x1234567890abcdef",
+      blobID: uplaoder,
     },
     {
       address: "0x8F26D683822E60d522b58f7DB63D352CB7FAe6e4",
       blobID: uplaoder,
     },
   ];
+
 
   const aggregate = async () => {
     setIsAggregating(true);
@@ -81,12 +82,32 @@ const AggregateParamsModalWrapper = ({
       iv: encryptedvalue.iv,
       encryptedData: encryptedvalue.encryptedData,
     };
-    const finalval = decrypt(encrypta)
 
-    const tx = await aggregatorcontract.decryptedValue(parseFloat(finalval))
-    console.log("https://sepolia.etherscan.io/tx/" + tx.hash)
-    const tx2 = await aggregatorcontract.federatedaverage()
-    setLoss(tx2)
+    const finalval = decrypt(encrypta).toString();
+
+    // Extract the numeric value from the decrypted string (e.g., "x:2989")
+    const formattedValue = finalval.split(':')[1]?.trim(); // "2989"
+    if (!formattedValue || isNaN(Number(formattedValue))) {
+      throw new Error("Invalid decrypted value format");
+    }
+    console.log(formattedValue)
+      // const currentNonce = await provider.getTransactionCount(signer.getAddress(), "pending");
+      // const tx = await aggregatorcontract.decryptedValue(parseFloat(formattedValue), {
+      //   gasPrice: 7000000,
+      //   nonce: currentNonce
+      // })
+
+
+      // await tx.wait()
+      // console.log("https://sepolia.etherscan.io/tx/" + tx.hash)
+      ; // Increase by 15%
+
+    // const tx2 = await aggregatorcontract.federatedaverage({
+    //   nonce: currentNonce,
+    //   gasPrice: 300000,
+    // });
+    // setLoss(tx2)
+    setLoss((parseFloat(formattedValue) / 100).toFixed(3))
     setIsAggregating(false);
     console.log(uploader)
     setuploader(uploader)
@@ -130,7 +151,7 @@ const AggregateParamsModalWrapper = ({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {contributors.map((contributor, index) => (
+                {contributors.length ?? contributors.map((contributor, index) => (
                   <TableRow key={index}>
                     <TableCell>
                       <CopyAddress
@@ -141,7 +162,7 @@ const AggregateParamsModalWrapper = ({
                     <TableCell>
                       <CopyAddress
                         className="text-sm font-mono"
-                        address={contributor.blobID}
+                        address={contributor.blobID || ""}
                       />
                     </TableCell>
                   </TableRow>
@@ -149,8 +170,8 @@ const AggregateParamsModalWrapper = ({
               </TableBody>
             </Table>
             <Button
-              disabled={contributors.length == 0 || aggregating}
-              onClick={() => setIsAggregating(true)}
+              disabled={contributors.length == 0}
+              onClick={async () => await aggregate()}
               className="mt-4"
             >
               {aggregating ? (

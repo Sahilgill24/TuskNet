@@ -107,7 +107,7 @@ const StartTrainingButton = ({
 }) => {
   const [dataSet, setDataSet] = useState<File | null>(null);
   const stakeAndUploadDataSet = async () => {
-    const response = await axios.get('http://localhost:4000/training')
+    const response = await axios.post('http://localhost:4000/training')
     console.log(response)
 
   }
