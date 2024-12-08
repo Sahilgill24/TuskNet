@@ -1,14 +1,15 @@
 ## TuskNet
 
 <div align="center">
-<img src="./images/tusknet-logo.png" height={160} width={160} alt="logo" />
+<img src="./images/tusknet-logo.png" height={100} width={100} alt="logo" />
 </div>
 
-
+<br />
 <div align="center">
 <b>Your Data, Your Control</b><br />
 <b>Collective Intelligence, Powered by Walrus.</b>
 </div>
+<br/>
 
 Say Hi to TuskNet!  A decentralized platform built on the Walrus network, designed to enable secure and privacy-preserving model training across distributed datasets. It ensures that sensitive data remains confidential by leveraging advanced cryptographic methods, including Pedersen commitments, to safeguard model parameters (weights and biases) throughout the training process.
 
