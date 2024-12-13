@@ -11,6 +11,8 @@
 </div>
 <br/>
 
+### This project won the 1000$ prize in the WALRUS track
+
 Say Hi to TuskNet!  A decentralized platform built on the Walrus network, designed to enable secure and privacy-preserving model training across distributed datasets. It ensures that sensitive data remains confidential by leveraging advanced cryptographic methods, including Pedersen commitments, to safeguard model parameters (weights and biases) throughout the training process.
 
 <div align="center">
